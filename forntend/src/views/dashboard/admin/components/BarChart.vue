@@ -28,17 +28,8 @@ export default {
   },
   data() {
     return {
-      chart: null,
-      chart_data: {
-        success: [79, 52, 200, 334, 390],
-        failed: [79, 52, 200, 334, 390],
-        error: [79, 52, 200, 334, 390],
-        skip: [79, 52, 200, 334, 390]
-      }
+      chart: null
     }
-  },
-  created() {
-    this.getChartData()
   },
   mounted() {
     this.$nextTick(() => {
@@ -53,11 +44,6 @@ export default {
     this.chart = null
   },
   methods: {
-    getChartData() {
-      barChartList().then(response => {
-        this.chart_data = response.data
-      })
-    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
 
@@ -101,7 +87,7 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: this.chart_data.success,
+          data: [],
           animationDuration,
           itemStyle: {
             normal: { color:'#79e076' }
@@ -111,7 +97,7 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: this.chart_data.failed,
+          data: [],
           animationDuration,
           itemStyle: {
             normal: { color:'#ea5555' }
@@ -121,7 +107,7 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: this.chart_data.error,
+          data: [],
           animationDuration,
           itemStyle: {
             normal: { color:'#ea8f40' }
@@ -131,12 +117,30 @@ export default {
           type: 'bar',
           stack: 'vistors',
           barWidth: '60%',
-          data: this.chart_data.skip,
+          data: [],
           animationDuration,
           itemStyle: {
             normal: { color:'#a1a1a4' }
           }
         }]
+      })
+      barChartList().then(response => {
+        this.chart.setOption({
+          series: [
+            {
+              data: response.data.success_list
+            },
+            {
+              data: response.data.failed_list
+            },
+            {
+              data: response.data.error_list
+            },
+            {
+              data: response.data.skip_list
+            }
+          ]
+        })
       })
     }
   }

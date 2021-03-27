@@ -26,18 +26,12 @@ export default {
   },
   data() {
     return {
-      chart: null,
-      chart_data: [
-        { value: 600, name: '成功' },
-        { value: 24, name: '跳过' },
-        { value: 88, name: '错误' },
-        { value: 102, name: '失败' }
-      ]
+      chart: null
     }
   },
-  created() {
-    this.getChartData()
-  },
+  // created() {
+  //   this.getChartData()
+  // },
   mounted() {
     this.$nextTick(() => {
       this.initChart()
@@ -51,14 +45,8 @@ export default {
     this.chart = null
   },
   methods: {
-    getChartData() {
-      pieChartList().then(response => {
-        this.chart_data = response.data
-      })
-    },
     initChart() {
       this.chart = echarts.init(this.$el, 'macarons')
-
       this.chart.setOption({
         title: {
           text: '测试结果',
@@ -85,12 +73,21 @@ export default {
             // roseType: 'radius',
             radius: [40, 90],
             center: ['50%', '38%'],
-            avoidLabelOverlap: false,
-            data: this.chart_data,
+            avoidLabelOverlap: true,
+            data: [],
             animationEasing: 'cubicInOut',
             animationDuration: 2600
           }
         ]
+      })
+      pieChartList().then(response => {
+        this.chart.setOption({
+          series: [
+            {
+              data: response.data
+            }
+          ]
+        })
       })
     }
   }

@@ -65,16 +65,26 @@ export default {
   },
   data() {
     return {
+      timer: null,
       data_dict: {
-        case_num: 199,
-        task_case_num: 99,
-        run_time: '33天12小时33分',
-        task_progress: 28
+        case_num: null,
+        task_case_num: null,
+        run_time: null,
+        task_progress: null
       }
     }
   },
   created() {
     this.fetchData()
+  },
+  mounted() {
+    this.timer = setInterval(() => {
+      this.fetchData()
+    }, 3600 * 1000)
+  },
+  beforeDestroy() {
+    clearInterval(this.timer)
+    this.timer = null
   },
   methods: {
     fetchData() {

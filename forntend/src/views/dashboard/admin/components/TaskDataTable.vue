@@ -41,10 +41,7 @@ export default {
   },
   data() {
     return {
-      table_list: [{ 'task_name': '测试版本0.5.0', 'submit_date': '2020-03-10', 'run_time': '1天22小时33分', 'status': 'done' },
-        { 'task_name': '测试版本0.5.3', 'submit_date': '2020-03-17', 'run_time': '1天22小时33分', 'status': 'running' },
-        { 'task_name': '测试版本0.5.3', 'submit_date': '2020-03-18', 'run_time': '1天22小时33分', 'status': 'waiting' }
-      ]
+      table_list: []
     }
   },
   created() {
