@@ -10,14 +10,22 @@ import models
 import schemas
 from core import security
 from core.config import settings
-from db.session import AsyncIOMotorClient
+from db.session import AsyncIOMotorClient, SessionLocal
 
 reusable_oauth2 = OAuth2PasswordBearer(
     tokenUrl=f"{settings.API_V1_STR}/login/access-token"
 )
 
 
-def get_current_user(
+def get_db() -> Generator:
+    try:
+        db = SessionLocal()
+        yield db
+    finally:
+        db.close()
+
+
+async def get_current_user(
     db: AsyncIOMotorClient, token: str = Depends(reusable_oauth2)
 ):
     try:
@@ -25,29 +33,29 @@ def get_current_user(
             token, settings.SECRET_KEY, algorithms=[settings.ALGORITHM]
         )
         if payload['exp'] - time.time() > 0:
-            user = crud.user.get_by_username(db, username=payload['sub'])
+            user = await crud.user.get_user_info(db, username=payload['sub'])
             if not user:
-                return None
+                raise HTTPException(status_code=400, detail="账号信息错误!")
             return user
         else:
-            return None
+            raise HTTPException(status_code=400, detail="令牌过期!")
     except (jwt.JWTError, ValidationError):
-        return None
+        raise HTTPException(status_code=400, detail="令牌过期!")
 
 
-def get_current_active_user(
+async def get_current_active_user(
     current_user: models.User = Depends(get_current_user),
 ) -> models.User:
-    if not crud.user.is_active(current_user):
-        raise HTTPException(status_code=400, detail="Inactive user")
+    if not await crud.user.is_active(current_user):
+        raise HTTPException(status_code=400, detail="账号被冻结!")
     return current_user
 
 
-def get_current_active_superuser(
+async def get_current_active_superuser(
     current_user: models.User = Depends(get_current_user),
 ) -> models.User:
-    if not crud.user.is_superuser(current_user):
+    if not await crud.user.is_superuser(current_user):
         raise HTTPException(
-            status_code=400, detail="The user doesn't have enough privileges"
+            status_code=400, detail="账号没有足够的权限!"
         )
     return current_user

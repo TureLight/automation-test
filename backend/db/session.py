@@ -1,9 +1,24 @@
 import pymongo
+import redis
+
 from loguru import logger
+
+from sqlalchemy import create_engine
+from sqlalchemy.orm import sessionmaker
 
 from core.config import settings
 
 from motor.motor_asyncio import AsyncIOMotorClient
+
+
+engine = create_engine(settings.SQLALCHEMY_DATABASE_URI, pool_pre_ping=True)
+SessionLocal = sessionmaker(autocommit=False, autoflush=False, bind=engine)
+
+redis_pool = redis.ConnectionPool(host=settings.REDIS_HOST,
+                                  port=settings.REDIS_PORT,
+                                  password=settings.REDIS_PASSWORD,
+                                  decode_responses=True
+                                  )
 
 
 class DataBase:
@@ -46,11 +61,15 @@ class AsyncMongoLink:
 
     @property
     def user(self):
-        return self.automation['user-info']
+        return self.automation['user_info']
 
     @property
     def task(self):
-        return self.automation['task-info']
+        return self.automation['task_info']
+
+    @property
+    def test_manage(self):
+        return self.automation['test_manage_data']
 
 
 class MongoLink:
@@ -70,11 +89,15 @@ class MongoLink:
 
     @property
     def user(self):
-        return self.automation['user-info']
+        return self.automation['user_info']
 
     @property
     def task(self):
-        return self.automation['task-info']
+        return self.automation['task_info']
+
+    @property
+    def test_manage(self):
+        return self.automation['test_manage_data']
 
 
 globals_link = MongoLink()

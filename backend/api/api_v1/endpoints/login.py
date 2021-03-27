@@ -17,12 +17,12 @@ from utils import (
     send_reset_password_email,
     verify_password_reset_token,
 )
-from db.session import mongo_l, get_database
+from db.session import get_database
 
 router = APIRouter()
 
 
-@router.post("/login/access-token")
+@router.post("/access-token")
 async def login_access_token(
     form_data: schemas.UserLogin, db: AsyncIOMotorClient = Depends(get_database)
 ) -> Any:
@@ -52,7 +52,7 @@ async def login_access_token(
     }
 
 
-@router.get("/login/user_info")
+@router.get("/user_info")
 async def get_user_info(
     token: str, db: AsyncIOMotorClient = Depends(get_database)
 ) -> Any:
@@ -68,7 +68,7 @@ async def get_user_info(
               }
     """
     user = await deps.get_current_user(db=db, token=token)
-    logger.debug(user)
+    # logger.debug(token)
     if not user:
         return {'code': 50008, 'message': '账号信息过期或者存在异常,请重新登录!'}
     elif not await crud.user.is_active(user):
@@ -86,14 +86,14 @@ async def get_user_info(
     }
 
 
-@router.post("/login/logout", response_model=schemas.Register)
+@router.post("/logout", response_model=schemas.Register)
 async def user_logout(x_token: List[str] = Header(None)) -> Any:
     print(x_token)
     # TODO 这里配置一个销毁方法,暂时把token放到临时表中,如果下次有这个token登录则阻拦
     return {'code': 20000, 'message': '退出成功!'}
 
 
-@router.post("/login/register", response_model=schemas.Register)
+@router.post("/register", response_model=schemas.Register)
 async def user_register(
     form_data: schemas.UserCreate, db=Depends(get_database)
 ) -> Any:
