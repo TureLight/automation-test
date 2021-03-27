@@ -3,7 +3,7 @@
     <el-form ref="loginForm" :model="loginForm" :rules="loginRules" class="login-form" autocomplete="on" label-position="left">
 
       <div class="title-container">
-        <h3 class="title">Login Form</h3>
+        <h3 class="title">自动化测试</h3>
       </div>
 
       <el-form-item prop="username">
@@ -13,7 +13,7 @@
         <el-input
           ref="username"
           v-model="loginForm.username"
-          placeholder="Username"
+          placeholder="用户名"
           name="username"
           type="text"
           tabindex="1"
@@ -31,7 +31,7 @@
             ref="password"
             v-model="loginForm.password"
             :type="passwordType"
-            placeholder="Password"
+            placeholder="密码"
             name="password"
             tabindex="2"
             autocomplete="on"
@@ -45,27 +45,21 @@
         </el-form-item>
       </el-tooltip>
 
-      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">Login</el-button>
-      <el-button :loading="loading" type="warning" style="width:100%;margin-bottom:20px;margin-left: -1px" @click="registerBoxVisible=true">注册</el-button>
+      <el-button :loading="loading" type="primary" style="width:100%;margin-bottom:30px;" @click.native.prevent="handleLogin">登录</el-button>
+      <el-button :loading="loading" type="warning" style="width:100%;margin-top: -10px;margin-bottom:20px;margin-left: -1px" @click="registerBoxVisible=true">注册</el-button>
 
       <div style="position:relative">
         <div class="tips">
-          <span>Username : admin</span>
-          <span>Password : any</span>
+          <span>连续登录错误,账号会被锁定...</span>
         </div>
-        <div class="tips">
-          <span style="margin-right:18px;">Username : editor</span>
-          <span>Password : any</span>
-        </div>
-
         <el-button class="thirdparty-button" type="primary" @click="showDialog=true">
-          Or connect with
+          第三方登录
         </el-button>
       </div>
     </el-form>
 
-    <el-dialog title="Or connect with" :visible.sync="showDialog">
-      Can not be simulated on local, so please combine you own business simulation! ! !
+    <el-dialog title="第三方登录" :visible.sync="showDialog" width="480px">
+      服务端未开启端口...
       <br>
       <br>
       <br>
@@ -316,7 +310,7 @@ export default {
 /* Detail see https://github.com/PanJiaChen/vue-element-admin/pull/927 */
 
 $bg:#283443;
-$light_gray:#fff;
+$light_gray: #3e7eca;
 $cursor: #289fee;
 
 @supports (-webkit-mask: none) and (not (cater-color: $cursor)) {
@@ -421,12 +415,12 @@ $light_gray:#eee;
   }
 
   .thirdparty-button {
-    position: absolute;
-    right: 0;
-    bottom: 6px;
+    position: relative;
+    left: 335px;
+    bottom: 26px;
   }
 
-  @media only screen and (max-width: 470px) {
+  @media only screen and (max-width: 150px) {
     .thirdparty-button {
       display: none;
     }
