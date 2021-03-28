@@ -1,23 +1,14 @@
 <template>
   <div class="app-container">
     <div class="filter-container">
-      <el-input v-model="listQuery.file_name" placeholder="用例名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
-      <el-select v-model="listQuery.module_name" placeholder="模块名称" clearable style="width: 200px" class="filter-item">
-        <el-option v-for="item in moduleNameOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.tester_name" placeholder="负责人" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in testerNameOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-select v-model="listQuery.case_state" placeholder="用例状态" clearable class="filter-item" style="width: 130px">
-        <el-option v-for="item in caseStateOptions" :key="item" :label="item" :value="item" />
-      </el-select>
-      <el-button v-waves class="filter-item" type="primary" icon="el-icon-search" style="margin-left: 8px" @click="handleFilter">
+      <el-input v-model="listQuery.task_name" disabled placeholder="任务名称" style="width: 200px;" class="filter-item" @keyup.enter.native="handleFilter" />
+      <el-button v-waves class="filter-item" disabled type="primary" icon="el-icon-search" style="margin-left: 8px" @click="handleFilter">
         搜索
       </el-button>
       <el-button class="filter-item" style="margin-left: 10px;" type="primary" icon="el-icon-edit" @click="handleCreate">
         新增
       </el-button>
-      <el-button v-waves :loading="downloadLoading" class="filter-item" type="primary" icon="el-icon-download" @click="handleDownload">
+      <el-button v-waves :loading="downloadLoading" class="filter-item" disabled type="primary" icon="el-icon-download" @click="handleDownload">
         导出
       </el-button>
     </div>
@@ -45,53 +36,66 @@
       </el-table-column>
       <el-table-column label="用例数量" width="90px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.total }}</span>
+          <span>{{ row.total }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="模块名称" width="90px" align="center">
+      <el-table-column label="任务名称" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.module_name }}</span>
+          <span>{{ row.task_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="用例名称" min-width="150px">
+      <el-table-column label="关联集合" min-width="150px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.file_name }}</span>
+          <span>{{ row.suite_name }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="相对路径" min-width="150px">
+      <el-table-column label="执行人" width="90px" align="center">
         <template slot-scope="{row}">
-          <span class="link-type" @click="handleUpdate(row)">{{ row.file_path }}</span>
+          <span>{{ row.operator }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="编制人" width="90px" align="center">
-        <template slot-scope="{row}">
-          <span>{{ row.author }}</span>
-        </template>
-      </el-table-column>
-      <el-table-column label="版本控制" width="90px" align="center">
+      <el-table-column label="提测版本" width="100px" align="center">
         <template slot-scope="{row}">
           <span>{{ row.version }}</span>
         </template>
       </el-table-column>
-      <el-table-column label="状态" class-name="status-col" width="90px" align="center">
+      <el-table-column label="任务状态" class-name="status-col" width="120px" align="center">
         <template slot-scope="{row}">
           <el-tag :type="row.status | statusFilter">
             {{ row.status }}
           </el-tag>
         </template>
       </el-table-column>
-      <el-table-column label="操作" align="center" width="230px" class-name="small-padding fixed-width">
+      <el-table-column label="操作" align="center" width="350px" class-name="small-padding fixed-width">
         <template slot-scope="{row,$index}">
-          <el-button type="primary" size="mini" @click="handleUpdate(row)">
-            编辑
+          <template v-if="row.status === 'running'">
+            <el-button type="primary" size="mini" disabled @click="handleTask(row)">
+              {{ row.status | handleFilter }}
+            </el-button>
+            <el-button type="warning" size="mini" disabled @click="handleUpdate(row)">
+              编辑
+            </el-button>
+          </template>
+          <template v-if="row.status === 'idle'">
+            <el-button type="primary" size="mini" @click="handleTask(row)">
+              {{ row.status | handleFilter }}
+            </el-button>
+            <el-button type="warning" size="mini" @click="handleUpdate(row)">
+              编辑
+            </el-button>
+          </template>
+          <template v-else>
+            <el-button type="primary" size="mini" @click="handleTask(row)">
+              {{ row.status | handleFilter }}
+            </el-button>
+            <el-button type="warning" size="mini" disabled @click="handleUpdate(row)">
+              编辑
+            </el-button>
+          </template>
+          <el-button type="success" size="mini" disabled @click="handleOpen(row)">
+            查看报告
           </el-button>
-          <el-button v-if="row.status!=='done'" size="mini" type="success" @click="handleModifyStatus(row,'done')">
-            已完成
-          </el-button>
-          <el-button v-if="row.status!=='coding'" size="mini" @click="handleModifyStatus(row,'coding')">
-            编写中
-          </el-button>
-          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" @click="handleDelete(row,$index)">
+          <el-button v-if="row.status!=='deleted'" size="mini" type="danger" disabled @click="handleDelete(row,$index)">
             删除
           </el-button>
         </template>
@@ -105,30 +109,21 @@
         <el-form-item label="更新时间" prop="update_time">
           <el-date-picker v-model="temp.update_time" type="datetime" placeholder="请选择时间" />
         </el-form-item>
-        <el-form-item label="用例数量" prop="total">
-          <el-input v-model="temp.total" />
+        <el-form-item label="任务名称" prop="module_name">
+          <el-input v-model="temp.task_name" />
         </el-form-item>
-        <el-form-item label="模块名称" prop="module_name">
-          <el-input v-model="temp.module_name" />
+        <el-form-item label="关联集合" prop="file_name">
+          <el-select v-model="temp.suite_name" class="filter-item" placeholder="请选择集合">
+            <el-option v-for="item in suiteOptions" :key="item.id" :label="item.name" :value="item.p_key" />
+          </el-select>
         </el-form-item>
-        <el-form-item label="用例名称" prop="file_name">
-          <el-input v-model="temp.file_name" />
-        </el-form-item>
-        <el-form-item label="相对路径" prop="file_path">
-          <el-input v-model="temp.file_path" />
-        </el-form-item>
-        <el-form-item label="编制人" prop="author">
-          <el-select v-model="temp.author" class="filter-item" placeholder="请选择编制人">
+        <el-form-item label="执行人" prop="author">
+          <el-select v-model="temp.operator" class="filter-item" placeholder="请选择执行人">
             <el-option v-for="item in testerNameOptions" :key="item" :label="item" :value="item" />
           </el-select>
         </el-form-item>
-        <el-form-item label="版本控制" prop="version">
+        <el-form-item label="提测版本" prop="version">
           <el-input v-model="temp.version" />
-        </el-form-item>
-        <el-form-item label="状态">
-          <el-select v-model="temp.status" class="filter-item" placeholder="请选择状态">
-            <el-option v-for="item in statusOptions" :key="item" :label="item" :value="item" />
-          </el-select>
         </el-form-item>
       </el-form>
       <div slot="footer" class="dialog-footer">
@@ -154,23 +149,32 @@
 </template>
 
 <script>
-import { fetchList, createCaseInfo, updateCaseInfo, updateCaseStatus, deleteCase } from '@/api/test_management/case_management'
+import { fetchList, createTask, updateTask, deleteTask, operatorTask, getSuite } from '@/api/task_management/task_schedule'
 import waves from '@/directive/waves' // waves directive
 import { parseTime } from '@/utils'
 import Pagination from '@/components/Pagination' // secondary package based on el-pagination
-
 let moment = require("moment") // 引入
 
 export default {
-  name: 'TestCaseManage',
+  name: 'TaskScheduling',
   components: { Pagination },
   directives: { waves },
   filters: {
     statusFilter(status) {
       const statusMap = {
         done: 'success',
-        coding: 'info',
-        deleted: 'danger'
+        idle: 'danger',
+        waiting: 'warning',
+        running: 'primary'
+      }
+      return statusMap[status]
+    },
+    handleFilter(status) {
+      const statusMap = {
+        done: '加入队列',
+        idle: '加入队列',
+        waiting: '退出队列',
+        running: '请误操作'
       }
       return statusMap[status]
     }
@@ -184,29 +188,22 @@ export default {
       listQuery: {
         page: 1,
         limit: 20,
-        module_name: null,
-        file_name: null,
-        tester_name: null,
-        case_state: null,
+        task_name: null,
         sort: '+id'
       },
       moduleNameOptions: ['宏观概览', '宏观框架', '指标中心'],
       testerNameOptions: ['谭文景', '常欣怡', '周春花', '李伦鑫', '张信'],
-      caseStateOptions: ['已完成', '编写中'],
+      suiteOptions: [],
       sortOptions: [{ label: 'ID Ascending', key: '+id' }, { label: 'ID Descending', key: '-id' }],
-      statusOptions: ['done', 'coding'],
-      showReviewer: false,
       temp: {
         id: undefined,
-        module_name: '',
-        file_name: '',
         update_time: new Date(),
-        // update_time: null,
-        file_path: '',
-        author: '',
-        version: '',
+        task_name: '',
+        suite_name: '',
         total: null,
-        status: 'done'
+        operator: '',
+        version: '',
+        status: ''
       },
       dialogFormVisible: false,
       dialogStatus: '',
@@ -217,12 +214,10 @@ export default {
       dialogPvVisible: false,
       pvData: [],
       rules: {
-        module_name: [{ required: true, message: '模块名称是必填项', trigger: 'blur' }],
-        update_time: [{ required: true, message: '更新时间是必填项', trigger: 'blur' }],
-        file_name: [{ required: true, message: '用例名称是必填项', trigger: 'blur' }],
-        file_path: [{ required: true, message: '文件路径是必填项', trigger: 'blur' }],
-        author: [{ required: true, message: '编制人是必填项', trigger: 'blur' }],
-        status: [{ required: true, message: '状态是必填项', trigger: 'change' }]
+        task_name: [{ required: true, message: '任务名称是必填项', trigger: 'blur' }],
+        suite_name: [{ required: true, message: '用例集合是必选项', trigger: 'blur' }],
+        operator: [{ required: true, message: '操作人是必填项', trigger: 'blur' }],
+        version: [{ required: true, message: '提测版本是必填项', trigger: 'blur' }]
       },
       downloadLoading: false,
       last_index: null
@@ -248,14 +243,19 @@ export default {
       this.listQuery.page = 1
       this.getList()
     },
-    handleModifyStatus(row, status) {
-      const updateForm = { 'id': row.id, 'status': status }
-      updateCaseStatus(updateForm).then(response => {
+    handleTask(row) {
+      this.listLoading = true
+      const new_status = (row.status === 'waiting') ? 'idle' : 'waiting'
+      const updateForm = { 'id': row.id, 'status': new_status }
+      operatorTask(updateForm).then(response => {
         this.$message({
           message: response.message,
           type: 'success'
         })
-        row.status = status
+        row.status = new_status
+        setTimeout(() => {
+          this.listLoading = false
+        }, 1.5 * 1000)
       })
     },
     sortChange(data) {
@@ -275,15 +275,13 @@ export default {
     resetTemp() {
       this.temp = {
         id: undefined,
-        module_name: '',
-        file_name: '',
         update_time: new Date(),
-        // update_time: null,
-        file_path: '',
-        author: '',
+        task_name: '',
+        suite_name: '',
         total: null,
+        operator: '',
         version: '',
-        status: 'done'
+        status: ''
       }
     },
     handleCreate() {
@@ -293,13 +291,16 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+      getSuite().then(response => {
+        this.suiteOptions = response.data
+      })
     },
     createData() {
       this.$refs['dataForm'].validate((valid) => {
         if (valid) {
           this.temp.id = this.last_index + 1
           this.temp.update_time = moment(this.temp.update_time).format('YYYY-MM-DD HH:mm')
-          createCaseInfo(this.temp).then(response => {
+          createTask(this.temp).then(response => {
             this.list.unshift(this.temp)
             this.dialogFormVisible = false
             this.$notify({
@@ -321,6 +322,9 @@ export default {
       this.$nextTick(() => {
         this.$refs['dataForm'].clearValidate()
       })
+      getSuite().then(response => {
+        this.suiteOptions = response.data
+      })
     },
     updateData() {
       this.$refs['dataForm'].validate((valid) => {
@@ -328,7 +332,7 @@ export default {
           const tempData = Object.assign({}, this.temp)
           // tempData.update_time = +new Date(tempData.update_time) // change Thu Nov 30 2017 16:41:05 GMT+0800 (CST) to 1512031311464
           tempData.update_time = moment(tempData.update_time).format('YYYY-MM-DD HH:mm')
-          updateCaseInfo(tempData).then(response => {
+          updateTask(tempData).then(response => {
             const index = this.list.findIndex(v => v.id === this.temp.id)
             this.list.splice(index, 1, this.temp)
             this.dialogFormVisible = false
@@ -339,7 +343,7 @@ export default {
               duration: 2000
             })
           })
-          // this.getList()
+          this.getList()
         }
       })
     },
@@ -352,7 +356,7 @@ export default {
           type: 'warning'
         }).catch(err => err)
       if (res === 'confirm') {
-        deleteCase(del_id).then(response => {
+        deleteTask(del_id).then(response => {
           this.$notify({
             title: '操作成功',
             message: response.message,

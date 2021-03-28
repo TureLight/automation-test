@@ -8,34 +8,35 @@ export function searchUser(name) {
   })
 }
 
-export function panelGroupList(query) {
+export function panelGroupList() {
   return request({
-    url: '/dashboard/panel_group_data',
+    url: '/dashboard/read_panel_group_data',
     method: 'get',
-    params: query
+    params: { 'query_params': 'panel_group_data' }
   })
 }
 
-export function pieChartList(query) {
+export function pieChartList() {
   return request({
-    url: '/dashboard/pie_chart_data',
+    url: '/dashboard/read_data',
     method: 'get',
-    params: query
+    params: { 'query_params': 'pie_chart_data' }
+
   })
 }
 
-export function barChartList(query) {
+export function barChartList() {
   return request({
-    url: '/dashboard/bar_chart_data',
+    url: '/dashboard/read_data',
     method: 'get',
-    params: query
+    params: { 'query_params': 'bar_chart_data' }
   })
 }
 
-export function taskDataList(query) {
+export function taskDataList() {
   return request({
-    url: '/dashboard/task_data',
+    url: '/dashboard/read_data',
     method: 'get',
-    params: query
+    params: { 'query_params': 'task_data_list' }
   })
 }

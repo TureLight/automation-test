@@ -5,7 +5,7 @@
       <draggable :set-data="setData" :list="list1" group="article" class="dragArea">
         <div v-for="element in list1" :key="element.id" class="list-complete-item">
           <div class="list-complete-item-handle">
-            {{ element.id }}[{{ element.author }}] {{ element.title }}
+            {{ element.id }} - {{ element.module_name }} - {{ element.file_name }} - {{ element.author }}
           </div>
           <div style="position:absolute;right:0px;">
             <span style="float: right ;margin-top: -20px;margin-right:5px;" @click="deleteEle(element)">
@@ -20,7 +20,7 @@
       <draggable :list="list2" group="article" class="dragArea">
         <div v-for="element in list2" :key="element.id" class="list-complete-item">
           <div class="list-complete-item-handle2" @click="pushEle(element)">
-            {{ element.id }} [{{ element.author }}] {{ element.title }}
+            {{ element.id }} - {{ element.module_name }} - {{ element.file_name }} - {{ element.author }}
           </div>
         </div>
       </draggable>
@@ -115,13 +115,14 @@ export default {
   }
   .dndList-list {
     float: left;
+    border: 1px solid #20a0ff;
     padding-bottom: 30px;
     &:first-of-type {
       margin-right: 2%;
     }
     .dragArea {
       margin-top: 15px;
-      min-height: 50px;
+      min-height: 100px;
       padding-bottom: 30px;
     }
   }

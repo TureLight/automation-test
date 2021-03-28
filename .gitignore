@@ -1,8 +1,7 @@
 /backend/.idea/
-.idea/
+/.idea/
 /forntend/.idea/
 /forntend/mock/
-.DS_Store
 /forntend/node_modules/
 npm-debug.log*
 yarn-debug.log*

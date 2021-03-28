@@ -13,16 +13,16 @@ const taskManageRouter = {
   },
   children: [
     {
-      path: 'test_execution',
-      component: () => import('@/views/task_management/test_execution'),
-      name: 'TestExecution',
-      meta: { title: '测试执行' }
-    },
-    {
       path: 'task_scheduling',
       component: () => import('@/views/task_management/task_scheduling'),
       name: 'TaskScheduling',
       meta: { title: '任务调度' }
+    },
+    {
+      path: 'test_execution',
+      component: () => import('@/views/task_management/distributed_monitoring'),
+      name: 'TestExecution',
+      meta: { title: '分布式监控' }
     }
   ]
 }

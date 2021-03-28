@@ -69,7 +69,7 @@ class AsyncMongoLink:
 
     @property
     def test_manage(self):
-        return self.automation['test_manage_data']
+        return self.automation['test_case']
 
 
 class MongoLink:
@@ -97,7 +97,19 @@ class MongoLink:
 
     @property
     def test_manage(self):
-        return self.automation['test_manage_data']
+        return self.automation['test_case']
+
+    @property
+    def test_suite(self):
+        return self.automation['test_suite']
+
+    @property
+    def test_suite_items(self):
+        return self.automation['test_suite_items']
+
+    @property
+    def task_schedule(self):
+        return self.automation['task_schedule']
 
 
 globals_link = MongoLink()
