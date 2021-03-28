@@ -17,25 +17,25 @@ export default {
     return {
       timeline: [
         {
-          timestamp: '2021/3/26',
-          title: '此处应为标题',
-          content: '发生了什么事... 2021/3/26 20:46'
+          timestamp: '2019/4/20',
+          title: 'Update Github template',
+          content: 'PanJiaChen committed 2019/4/20 20:46'
         },
         {
-          timestamp: '2021/3/26',
-          title: '此处应为标题',
-          content: '发生了什么事... 2021/3/26 20:46'
+          timestamp: '2019/4/21',
+          title: 'Update Github template',
+          content: 'PanJiaChen committed 2019/4/21 20:46'
         },
         {
-          timestamp: '2021/3/26',
-          title: '此处应为标题',
-          content: '发生了什么事... 2021/3/26 20:46'
+          timestamp: '2019/4/22',
+          title: 'Build Template',
+          content: 'PanJiaChen committed 2019/4/22 20:46'
         },
         {
-          timestamp: '2021/3/26',
-          title: '此处应为标题',
-          content: '发生了什么事... 2021/3/26 20:46'
-        },
+          timestamp: '2019/4/23',
+          title: 'Release New Version',
+          content: 'PanJiaChen committed 2019/4/23 20:46'
+        }
       ]
     }
   }

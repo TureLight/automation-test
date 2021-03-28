@@ -4,10 +4,10 @@
       <el-input v-model.trim="user.name" />
     </el-form-item>
     <el-form-item label="Email">
-      <el-input v-model.trim="user.email" disabled />
+      <el-input v-model.trim="user.email" />
     </el-form-item>
     <el-form-item>
-      <el-button type="primary" disabled @click="submit">更新信息</el-button>
+      <el-button type="primary" @click="submit">Update</el-button>
     </el-form-item>
   </el-form>
 </template>
